@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from "@angular/forms";
 
 import { EmployeeService } from "../shared/employee.service";
+import { Employee } from "../shared/employee.model";
 
 declare var M: any;
 
@@ -17,6 +18,7 @@ export class EmployeeComponent implements OnInit {
 
   ngOnInit() {
     this.resetForm();
+    this.refreshEmployeeList();
   }
 
   resetForm(form?: NgForm) {
@@ -33,10 +35,39 @@ export class EmployeeComponent implements OnInit {
   };
 
   onSubmit(form: NgForm) {
-    this.employeeService.postEmployee(form.value).subscribe(res => {
-      this.resetForm(form);
-      M.toast({html: "Saved successfully"})
+    if (form.value._id === "") {
+      this.employeeService.postEmployee(form.value).subscribe(res => {
+        this.resetForm(form);
+        this.refreshEmployeeList();
+        M.toast({html: "Saved successfully"});
+      });
+    } else {
+      this.employeeService.putEmployee(form.value).subscribe(res => {
+        this.resetForm(form);
+        this.refreshEmployeeList();
+        M.toast({html: "Updated successfully"});
+      });
+    };
+  };
+
+  refreshEmployeeList() {
+    this.employeeService.getEmployeeList().subscribe(res => {
+      this.employeeService.employees = res as Employee[];
     });
+  };
+
+  onEdit(emp: Employee) {
+    this.employeeService.selectedEmployee = emp;
+  };
+
+  onDelete(_id: string, form: NgForm) {
+    if (confirm("Are you sure you want to remove this employee?") === true) {
+      this.employeeService.deleteEmployee(_id).subscribe(res => {
+        this.refreshEmployeeList();
+        this.resetForm(form);
+        M.toast({html: "Deleted successfully"});
+      });
+    }
   };
 
 }
