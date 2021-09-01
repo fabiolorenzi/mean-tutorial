@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
 import { Employee } from "./employee.model";
 
 @Injectable({
@@ -10,7 +8,7 @@ import { Employee } from "./employee.model";
 export class EmployeeService {
   selectedEmployee!: Employee;
   employees!: Employee[];
-  readonly baseUrl = "http://localhost:8082/api/employees";
+  readonly baseUrl = "http://localhost:8082/employees";
 
   constructor(private http: HttpClient) { }
 
